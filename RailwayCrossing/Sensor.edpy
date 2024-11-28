@@ -1,0 +1,122 @@
+
+#-------------Setup----------------
+
+import Ed
+
+Ed.EdisonVersion = Ed.V2
+Ed.DistanceUnits = Ed.CM
+Ed.Tempo = Ed.TEMPO_MEDIUM
+
+
+#--------Your code below-----------
+#Sensor
+
+Ed.ObstacleDetectionBeam(Ed.ON)
+
+previousLeftObstacle = 0 
+
+previousRightObstacle = 0 
+
+
+Ed.TimeWait(2, Ed.TIME_SECONDS)
+
+Ed.ReadObstacleDetection()
+
+incoming = Ed.TuneString(3, "d4z") 
+leaving = Ed.TuneString(3, "a4z") 
+
+
+#Ed.StartCountDown(5, Ed.TIME_SECONDS)
+
+while True:
+    
+    obstacle = Ed.ReadObstacleDetection() 
+ 
+
+    if obstacle == Ed.OBSTACLE_LEFT: #train approaching from the left
+        Ed.LeftLed(Ed.ON)
+        
+        Ed.StartCountDown(3, Ed.TIME_SECONDS)
+        previousLeftObstacle = 1 
+
+
+    if obstacle == Ed.OBSTACLE_RIGHT: #train approaching from the right
+        Ed.RightLed(Ed.ON)
+
+        Ed.StartCountDown(3, Ed.TIME_SECONDS)
+        previousRightObstacle = 1 
+
+
+
+    if obstacle == Ed.OBSTACLE_AHEAD:
+        Ed.RightLed(Ed.ON)
+        Ed.LeftLed(Ed.ON)
+
+
+        Ed.StartCountDown(10, Ed.TIME_MILLISECONDS)
+        
+        
+        if previousRightObstacle == 1:
+            Ed.ObstacleDetectionBeam(Ed.OFF)
+            
+            Ed.SendIRData(25) #close gates train approaching track
+            Ed.PlayTune(incoming)
+            Ed.ObstacleDetectionBeam(Ed.ON)
+        
+            Ed.TimeWait(5, Ed.TIME_SECONDS)
+        
+            Ed.ReadObstacleDetection() # clear obstacle detector
+        
+        if previousLeftObstacle == 1:
+            Ed.ObstacleDetectionBeam(Ed.OFF)
+        
+            Ed.SendIRData(30) #Open gates train left track
+            Ed.PlayTune(leaving)
+        
+            Ed.ObstacleDetectionBeam(Ed.ON)
+        
+            Ed.StartCountDown(10, Ed.TIME_MILLISECONDS)
+            Ed.TimeWait(5, Ed.TIME_SECONDS)
+        
+            Ed.ReadObstacleDetection() # clear obstacle detector
+
+        
+
+
+
+
+
+
+    if Ed.ReadCountDown(Ed.TIME_MILLISECONDS) < 10:
+        previousLeftObstacle = 0 
+        
+        previousRightObstacle = 0 
+        
+        Ed.RightLed(Ed.OFF)
+        Ed.LeftLed(Ed.OFF)
+        
+        #Ed.StartCountDown(5, Ed.TIME_SECONDS)
+
+
+
+
+
+    
+"""
+    if Ed.ReadCountDown(Ed.TIME_MILLISECONDS) < 10:
+        previousLeftObstacle = 0 
+        
+        previousRightObstacle = 0 
+        Ed.StartCountDown(5, Ed.TIME_SECONDS)
+
+
+    if obstacle == Ed.OBSTACLE_AHEAD:
+        Ed.RightLed(Ed.ON)
+        Ed.LeftLed(Ed.ON)
+    else:
+        Ed.RightLed(Ed.OFF)
+        Ed.LeftLed(Ed.OFF)
+
+"""
+        
+

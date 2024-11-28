@@ -1,0 +1,50 @@
+
+#-------------Setup----------------
+
+import Ed
+
+Ed.EdisonVersion = Ed.V2
+Ed.DistanceUnits = Ed.CM
+Ed.Tempo = Ed.TEMPO_MEDIUM
+
+#--------Your code below-----------
+#Train
+
+direc = 0 
+
+
+Ed.Drive(Ed.FORWARD, 1 , 1) 
+
+Ed.StartCountDown(70, Ed.TIME_MILLISECONDS)
+
+while True:
+
+    if Ed.ReadCountDown(Ed.TIME_MILLISECONDS) < 10:
+        Ed.Drive(Ed.STOP, 1, 1)
+        Ed.TimeWait(50, Ed.TIME_MILLISECONDS)
+        Ed.StartCountDown(70, Ed.TIME_MILLISECONDS)
+
+
+    
+    if Ed.ReadDriveLoad()==Ed.DRIVE_NO_STRAIN: 
+ 
+        if direc == 0:
+            Ed.Drive(Ed.FORWARD, 1 , Ed.DISTANCE_UNLIMITED) 
+
+        else:
+            Ed.Drive(Ed.BACKWARD, 1 , Ed.DISTANCE_UNLIMITED) 
+
+    else:
+        Ed.Drive(Ed.STOP, 1, 1)
+        Ed.TimeWait(8, Ed.TIME_SECONDS)
+
+        if direc == 0:
+            Ed.Drive(Ed.BACKWARD, 1 , Ed.DISTANCE_UNLIMITED) 
+            direc = 1
+ 
+        else:
+            Ed.Drive(Ed.FORWARD, 1 , Ed.DISTANCE_UNLIMITED) 
+            direc = 0
+
+        Ed.TimeWait(70, Ed.TIME_MILLISECONDS)
+        

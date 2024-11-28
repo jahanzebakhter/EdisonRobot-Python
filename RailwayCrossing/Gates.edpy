@@ -1,0 +1,78 @@
+
+#-------------Setup----------------
+
+import Ed
+
+Ed.EdisonVersion = Ed.V2
+Ed.DistanceUnits = Ed.CM
+Ed.Tempo = Ed.TEMPO_MEDIUM
+
+#--------Your code below-----------
+#Gate
+
+Ed.RegisterEventHandler(Ed.EVENT_IR_DATA, "irDataReceived")
+
+Ed.RegisterEventHandler(Ed.EVENT_KEYPAD_TRIANGLE, "closeGate")
+
+Ed.RegisterEventHandler(Ed.EVENT_KEYPAD_ROUND, "openGate")
+
+currentGatePosition = 1 #0 is closed, 1 is open, start with open gate
+
+gateCloseOverride = 0 #message from controller to forcebly close gate until resumed
+
+while True:
+    pass
+
+def irDataReceived():
+    global gateCloseOverride
+    irDataValue = Ed.ReadIRData()
+   
+    if irDataValue == 25 :
+       closeGate()
+    
+    if irDataValue == 30 :  
+        openGate()
+
+    if irDataValue == 45 :  
+        gateCloseOverride = 1
+        closeGate()    
+
+    if irDataValue == 50 :  
+        gateCloseOverride = 0
+
+    
+def closeGate():
+    global  currentGatePosition
+
+    Ed.ObstacleDetectionBeam(Ed.ON)
+
+    Ed.ReadObstacleDetection() 
+    Ed.TimeWait(200, Ed.TIME_MILLISECONDS)
+    
+    #try three times  
+    
+    while Ed.ReadObstacleDetection() == Ed.OBSTACLE_NONE:
+        Ed.DriveLeftMotor(Ed.FORWARD, 1, Ed.DISTANCE_UNLIMITED)
+        Ed.TimeWait(5, Ed.TIME_MILLISECONDS)
+        Ed.Drive(Ed.STOP, 1, 1) 
+        Ed.ReadObstacleDetection()
+        Ed.TimeWait(300, Ed.TIME_MILLISECONDS)
+
+    Ed.Drive(Ed.STOP, 1, 1) 
+    
+    currentGatePosition = 2 #Gate is is closed
+    Ed.ObstacleDetectionBeam(Ed.OFF)
+
+
+def openGate():
+    
+    global currentGatePosition
+    
+    #open the gate only if gate is closed and no work
+    if currentGatePosition != 1 and gateCloseOverride == 0: 
+        
+        Ed.DriveLeftMotor(Ed.BACKWARD, 1, 2)
+         
+        currentGatePosition = 1 #Gate is Open
+
+    

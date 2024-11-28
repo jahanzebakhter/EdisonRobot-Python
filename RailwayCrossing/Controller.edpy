@@ -1,0 +1,33 @@
+
+#-------------Setup----------------
+
+import Ed
+
+Ed.EdisonVersion = Ed.V2
+Ed.DistanceUnits = Ed.CM
+Ed.Tempo = Ed.TEMPO_MEDIUM
+
+
+#--------Your code below-----------
+#Controller
+
+Ed.RegisterEventHandler(Ed.EVENT_KEYPAD_TRIANGLE, "irGatesCloseWork")
+
+Ed.RegisterEventHandler(Ed.EVENT_KEYPAD_ROUND, "irGatesResumeOp")
+
+
+#Ed.StartCountDown(5, Ed.TIME_SECONDS)
+
+while True:
+    pass
+
+
+def irGatesCloseWork():
+    Ed.SendIRData(45)    
+
+
+def irGatesResumeOp():
+    Ed.SendIRData(50)    
+
+    
+
