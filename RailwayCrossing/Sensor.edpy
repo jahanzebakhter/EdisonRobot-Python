@@ -52,9 +52,7 @@ while True:
         Ed.RightLed(Ed.ON)
         Ed.LeftLed(Ed.ON)
 
-
         Ed.StartCountDown(10, Ed.TIME_MILLISECONDS)
-        
         
         if previousRightObstacle == 1:
             Ed.ObstacleDetectionBeam(Ed.OFF)
@@ -75,12 +73,13 @@ while True:
         
             Ed.ObstacleDetectionBeam(Ed.ON)
         
-            Ed.StartCountDown(10, Ed.TIME_MILLISECONDS)
+            #Ed.StartCountDown(10, Ed.TIME_MILLISECONDS)
+            
             Ed.TimeWait(5, Ed.TIME_SECONDS)
         
             Ed.ReadObstacleDetection() # clear obstacle detector
 
-        
+        resetState()
 
 
 
@@ -88,18 +87,21 @@ while True:
 
 
     if Ed.ReadCountDown(Ed.TIME_MILLISECONDS) < 10:
-        previousLeftObstacle = 0 
-        
-        previousRightObstacle = 0 
-        
-        Ed.RightLed(Ed.OFF)
-        Ed.LeftLed(Ed.OFF)
-        
+
+        resetState()
         #Ed.StartCountDown(5, Ed.TIME_SECONDS)
 
 
 
-
+def resetState():
+    global previousLeftObstacle,  previousRightObstacle 
+    
+    previousLeftObstacle = 0 
+    
+    previousRightObstacle = 0 
+    
+    Ed.RightLed(Ed.OFF)
+    Ed.LeftLed(Ed.OFF)
 
     
 """
